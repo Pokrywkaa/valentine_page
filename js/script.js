@@ -77,12 +77,35 @@ function handleNoClick() {
 
 // Move "Nie" button to random position
 function moveNoButtonRandomly() {
-    const randomX = Math.random() * 80 + 10; // 10-90%
-    const randomY = Math.random() * 80 + 10; // 10-90%
+    const isMobile = window.innerWidth <= 768;
     
-    noBtn.style.position = 'fixed';
-    noBtn.style.left = randomX + '%';
-    noBtn.style.top = randomY + '%';
+    if (isMobile) {
+        // Mobile: keep button within viewport with safe bounds
+        const buttonWidth = 80; // approximate button width in pixels
+        const buttonHeight = 40;
+        
+        const maxX = window.innerWidth - buttonWidth - 10;
+        const maxY = window.innerHeight - buttonHeight - 60; // Leave space at bottom
+        
+        const randomX = Math.random() * Math.max(buttonWidth, maxX - buttonWidth) + 10;
+        const randomY = Math.random() * Math.max(buttonHeight, maxY - 100) + 50;
+        
+        noBtn.style.position = 'fixed';
+        noBtn.style.left = randomX + 'px';
+        noBtn.style.top = randomY + 'px';
+        noBtn.style.right = 'auto';
+        noBtn.style.bottom = 'auto';
+    } else {
+        // Desktop: use percentage positioning
+        const randomX = Math.random() * 80 + 10; // 10-90%
+        const randomY = Math.random() * 80 + 10; // 10-90%
+        
+        noBtn.style.position = 'fixed';
+        noBtn.style.left = randomX + '%';
+        noBtn.style.top = randomY + '%';
+        noBtn.style.right = 'auto';
+        noBtn.style.bottom = 'auto';
+    }
 }
 
 // Show funny messages for repeated "Nie" clicks
