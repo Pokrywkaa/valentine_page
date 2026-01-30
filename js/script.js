@@ -9,6 +9,7 @@ const messagesDiv = document.getElementById('messages');
 const heartsContainer = document.getElementById('hearts-container');
 const confettiCanvas = document.getElementById('confetti-canvas');
 const valentineImage = document.getElementById('valentine-image');
+const celebrationMusic = document.getElementById('celebration-music');
 
 // State management
 let noPresses = 0;
@@ -161,6 +162,12 @@ function showCelebrationScreen() {
     startConfetti();
     createHeartExplosion();
     playSuccessSound();
+    
+    // Play celebration music
+    if (celebrationMusic) {
+        celebrationMusic.currentTime = 0;  // Reset to start
+        celebrationMusic.play().catch(err => console.log('Music autoplay prevented:', err));
+    }
 }
 
 // Display GIFs in gallery
@@ -182,7 +189,7 @@ function loadGifs() {
 
 // Create floating hearts background
 function createBackgroundHearts() {
-    const heartCount = 15;
+    const heartCount = 30;  // Increased from 15 for more visual impact
     const hearts = ['💕', '❤️', '💖'];
     
     for (let i = 0; i < heartCount; i++) {
@@ -205,7 +212,7 @@ function createBackgroundHearts() {
 
 // Create heart explosion on "Tak" click
 function createHeartExplosion() {
-    const explosionCount = 30;
+    const explosionCount = 60;  // Increased from 30 for more visual impact
     const hearts = ['💕', '❤️', '💖'];
     
     for (let i = 0; i < explosionCount; i++) {
@@ -260,7 +267,7 @@ function startConfetti() {
     confettiCanvas.height = window.innerHeight;
     
     const particles = [];
-    const particleCount = 100;
+    const particleCount = 200;  // Increased from 100 for more visual impact
     
     for (let i = 0; i < particleCount; i++) {
         particles.push({
@@ -343,6 +350,12 @@ function handleRestart() {
     // Reset state
     noPresses = 0;
     messagesDiv.textContent = '';
+    
+    // Stop celebration music
+    if (celebrationMusic) {
+        celebrationMusic.pause();
+        celebrationMusic.currentTime = 0;
+    }
     
     // Reset button styles
     yesBtn.style.transform = 'scale(1)';

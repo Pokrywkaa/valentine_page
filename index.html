@@ -24,7 +24,7 @@
     <div id="initial-screen" class="screen active">
         <div class="container">
             <div class="content">
-                <h1 class="question">Czy bedziesz moja walentynka?</h1>
+                <h2 class="question">Czy będziesz moją walentynką?</h2>
                 
                 <div class="image-container">
                     <img id="valentine-image" src="media/img/cat-asking.webp" alt="Valentine" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22300%22 height=%22300%22%3E%3Crect fill=%22%23ffe4e1%22 width=%22300%22 height=%22300%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 font-size=%2224%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22%23ff69b4%22%3E💕%3C/text%3E%3C/svg%3E'">
@@ -59,6 +59,11 @@
     <!-- Heart particle container -->
     <div id="hearts-container"></div>
 
-    <script src="js/script.js"></script>
+    <!-- Celebration music -->
+    <audio id="celebration-music" preload="auto">
+        <source src="media/music/Happy Happy Happy Cat_spotdown.org.mp3" type="audio/mpeg">
+    </audio>
+
+    <script src="js/script.js?v=7"></script>
 </body>
 </html>
