@@ -423,6 +423,7 @@ body {
         text-overflow: ellipsis;
         z-index: 1000;
         touch-action: manipulation;
+        pointer-events: auto;
     }
 
     .celebration-message {
@@ -486,6 +487,8 @@ body {
         width: 100%;
         justify-content: center;
         flex-wrap: wrap;
+        position: static;
+        overflow: visible;
     }
 
     .btn {
@@ -498,6 +501,7 @@ body {
         justify-content: center;
         touch-action: manipulation;
         flex: 0 1 auto;
+        cursor: pointer;
     }
 
     .btn:active {

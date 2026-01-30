@@ -34,10 +34,6 @@ function setupEventListeners() {
     noBtn.addEventListener('click', handleNoClick);
     restartBtn.addEventListener('click', handleRestart);
     
-    // Mobile touch events
-    noBtn.addEventListener('touchstart', preventNoHover);
-    noBtn.addEventListener('touchend', handleTouchEnd);
-    
     // Prevent "Nie" button from being clickable when it's scaled too small
     noBtn.addEventListener('mouseenter', preventNoHover);
     
@@ -57,11 +53,14 @@ function handleYesClick() {
 
 // Handle "Nie" (No) button click
 function handleNoClick() {
+    console.log('[DEBUG] Nie button clicked. noPresses:', noPresses);
     noPresses++;
+    console.log('[DEBUG] Updated noPresses:', noPresses);
     
     // Scale the "Tak" button
     const newScale = 1 + (noPresses * 0.3);
     yesBtn.style.transform = `scale(${newScale})`;
+    console.log('[DEBUG] Scaled Tak button to:', newScale);
     
     // Move "Nie" button to random position
     moveNoButtonRandomly();
@@ -78,23 +77,41 @@ function handleNoClick() {
 // Move "Nie" button to random position
 function moveNoButtonRandomly() {
     const isMobile = window.innerWidth <= 768;
+    console.log('[DEBUG] moveNoButtonRandomly called. isMobile:', isMobile, 'noPresses:', noPresses);
+    
+    // On mobile, don't start moving button until after 2 clicks
+    if (isMobile && noPresses <= 2) {
+        console.log('[DEBUG] Skipping movement on mobile for early clicks');
+        return;
+    }
     
     if (isMobile) {
         // Mobile: keep button within viewport with safe bounds
-        const buttonWidth = 80; // approximate button width in pixels
-        const buttonHeight = 40;
+        const buttonWidth = 90;
+        const buttonHeight = 50;
         
-        const maxX = window.innerWidth - buttonWidth - 10;
-        const maxY = window.innerHeight - buttonHeight - 60; // Leave space at bottom
+        // Ensure we have valid viewport dimensions
+        const viewportWidth = window.innerWidth || screen.width;
+        const viewportHeight = window.innerHeight || screen.height;
         
-        const randomX = Math.random() * Math.max(buttonWidth, maxX - buttonWidth) + 10;
-        const randomY = Math.random() * Math.max(buttonHeight, maxY - 100) + 50;
+        // Calculate safe boundaries
+        const maxX = Math.max(buttonWidth, viewportWidth - buttonWidth - 20);
+        const maxY = Math.max(buttonHeight, viewportHeight - buttonHeight - 80);
         
+        // Generate random position within bounds
+        const randomX = Math.random() * (maxX - buttonWidth) + 10;
+        const randomY = Math.random() * (maxY - buttonHeight) + 40;
+        
+        // Apply positioning
         noBtn.style.position = 'fixed';
-        noBtn.style.left = randomX + 'px';
-        noBtn.style.top = randomY + 'px';
+        noBtn.style.left = Math.max(0, randomX) + 'px';
+        noBtn.style.top = Math.max(0, randomY) + 'px';
         noBtn.style.right = 'auto';
         noBtn.style.bottom = 'auto';
+        noBtn.style.width = 'auto';
+        noBtn.style.height = 'auto';
+        
+        console.log('[DEBUG] Mobile positioning. Pos:', randomX.toFixed(0), randomY.toFixed(0));
     } else {
         // Desktop: use percentage positioning
         const randomX = Math.random() * 80 + 10; // 10-90%
@@ -105,6 +122,8 @@ function moveNoButtonRandomly() {
         noBtn.style.top = randomY + '%';
         noBtn.style.right = 'auto';
         noBtn.style.bottom = 'auto';
+        
+        console.log('[DEBUG] Desktop positioning. Pos:', randomX.toFixed(0), randomY.toFixed(0));
     }
 }
 
@@ -398,11 +417,7 @@ function optimizeForMobile() {
 }
 
 function handleTouchEnd(e) {
-    e.preventDefault();
-    // Re-trigger hover effect for next interaction
-    if (noPresses >= 3) {
-        moveNoButtonRandomly();
-    }
+    // Touch handler - allow click events to fire normally on touch devices
 }
 
 function handleOrientationChange() {
