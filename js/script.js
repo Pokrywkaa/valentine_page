@@ -34,8 +34,20 @@ function setupEventListeners() {
     noBtn.addEventListener('click', handleNoClick);
     restartBtn.addEventListener('click', handleRestart);
     
+    // Mobile touch events
+    noBtn.addEventListener('touchstart', preventNoHover);
+    noBtn.addEventListener('touchend', handleTouchEnd);
+    
     // Prevent "Nie" button from being clickable when it's scaled too small
     noBtn.addEventListener('mouseenter', preventNoHover);
+    
+    // Optimize for mobile viewport
+    if (window.innerWidth <= 768) {
+        optimizeForMobile();
+    }
+    
+    // Handle orientation changes
+    window.addEventListener('orientationchange', handleOrientationChange);
 }
 
 // Handle "Tak" (Yes) button click
@@ -347,3 +359,91 @@ style.textContent = `
     }
 `;
 document.head.appendChild(style);
+
+// ============================================
+// Mobile Optimization Functions
+// ============================================
+
+function optimizeForMobile() {
+    // Disable hover effects on touch devices
+    document.documentElement.classList.add('touch-device');
+    
+    // Reduce animation complexity on low-end devices
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        document.documentElement.style.setProperty('--transition', '0s');
+    }
+}
+
+function handleTouchEnd(e) {
+    e.preventDefault();
+    // Re-trigger hover effect for next interaction
+    if (noPresses >= 3) {
+        moveNoButtonRandomly();
+    }
+}
+
+function handleOrientationChange() {
+    // Adjust layout on orientation change
+    setTimeout(() => {
+        window.scrollTo(0, 0);
+        // Recalculate button positions
+        if (noPresses > 0) {
+            noBtn.style.position = 'fixed';
+        }
+    }, 100);
+}
+
+// Detect if device is mobile
+function isMobileDevice() {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) 
+        || window.innerWidth <= 768;
+}
+
+// Enhance touch interactions
+function enhanceTouchInteractions() {
+    const buttons = document.querySelectorAll('.btn');
+    
+    buttons.forEach(btn => {
+        // Add active state on touch
+        btn.addEventListener('touchstart', function() {
+            this.style.opacity = '0.8';
+        });
+        
+        btn.addEventListener('touchend', function() {
+            this.style.opacity = '1';
+        });
+    });
+}
+
+// Optimize confetti for mobile
+function optimizeConfettiForMobile() {
+    const isMobile = window.innerWidth <= 768;
+    if (isMobile) {
+        // Reduce particle count on mobile
+        return 50; // instead of 100
+    }
+    return 100;
+}
+
+// Call mobile enhancements when script loads
+if (isMobileDevice()) {
+    document.addEventListener('DOMContentLoaded', () => {
+        enhanceTouchInteractions();
+    });
+}
+
+// Handle window resize to adapt layout
+let resizeTimer;
+window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+        // Adjust UI on resize
+        if (noPresses > 0 && noBtn.style.position === 'fixed') {
+            // Keep "Nie" button in viewport
+            const rect = noBtn.getBoundingClientRect();
+            if (rect.left < 0 || rect.right > window.innerWidth) {
+                moveNoButtonRandomly();
+            }
+        }
+    }, 250);
+});
